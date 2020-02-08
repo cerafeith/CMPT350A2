@@ -1,0 +1,56 @@
+[2020-02-07 20:32:21] Connected
+postgres.public> create table users
+                 (
+                     id        varchar primary key,
+                     firstname varchar not null,
+                     lastname  varchar not null
+                 )
+[2020-02-07 20:55:09] completed in 14 ms
+postgres.public> create table contacts
+                 (
+                     id             varchar primary key,
+                     owner_userid   integer references users (id),
+                     contact_userid integer references users (id)
+                 )
+[2020-02-07 20:55:11] [42804] ERROR: foreign key constraint "contacts_owner_userid_fkey" cannot be implemented
+[2020-02-07 20:55:11] Detail: Key columns "owner_userid" and "id" are of incompatible types: integer and character varying.
+postgres.public> create table contacts
+                 (
+                     id             varchar primary key,
+                     owner_userid   varchar references users (id),
+                     contact_userid varchar references users (id)
+                 )
+[2020-02-07 20:55:34] completed in 13 ms
+postgres.public> create table messages
+                 (
+                     id               varchar primary key,
+                     sender_userid    varchar references users (id),
+                     recipient_userid varchar references users (id),
+                     message          varchar not null
+                 )
+[2020-02-07 20:55:40] completed in 17 ms
+postgres.public> create table likes
+                 (
+                     id         varchar primary key,
+                     message_id varchar references messages (id),
+                     userid     varchar references users (id)
+                 )
+[2020-02-07 20:55:42] completed in 7 ms
+postgres.public> insert into users (id, firstname, lastname)
+                 values ('daven-id', 'daven', 'casia'),
+                        ('sarah-id', 'sarah', 'piot')
+[2020-02-07 20:56:40] 2 rows affected in 5 ms
+postgres.public> insert into contacts (id, owner_userid, contact_userid)
+                 values ('message-1', 'daven-id', 'sarah-id')
+[2020-02-07 20:58:15] 1 row affected in 5 ms
+postgres.public> insert into contacts (id, owner_userid, contact_userid)
+                 values ('contact-1', 'daven-id', 'sarah-id')
+[2020-02-07 21:01:34] 1 row affected in 5 ms
+postgres.public> insert into messages (id, sender_userid, recipient_userid, message)
+                 values ('message-1', 'daven-id', 'sarah-id', 'Hi Sarah'),
+                        ('message-2', 'sarah-id', 'daven-id', 'Hi Daven')
+[2020-02-07 21:05:02] 2 rows affected in 8 ms
+postgres.public> insert into likes (id, message_id, userid)
+                 values ('like-1', 'message-1', 'daven-id'),
+                        ('like-2', 'message-2', 'sarah-id')
+[2020-02-07 21:06:38] 2 rows affected in 6 ms
